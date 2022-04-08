@@ -1,5 +1,5 @@
 +++
-title = "Robots and Sound Communication"
+title = "Talking with robots"
 date = 2022-04-08
 category = "Tech"
 
@@ -19,9 +19,9 @@ A surprisingly non-obvious option is the use of sound waves to create a sort of 
 
 Developing speech recognition is not a simple task. But maybe this is not the correct path to achieve a communication channel with hardware for simple applications. Detecting single tones is a very feasible thing to do though.
 
-A handy algorithm that can be used to detect tones even on memory constrained hardware is the (Goertzel Algorithm)[https://en.wikipedia.org/wiki/Goertzel_algorithm]. Opposite to Fast Fourier Transform, It requires much less memory and CPU cycles to compute a predefined set of frequencies.
+A handy algorithm that can be used to detect tones even on memory constrained hardware is the [Goertzel Algorithm](https://en.wikipedia.org/wiki/Goertzel_algorithm). Opposite to Fast Fourier Transform, It requires much less memory and CPU cycles to compute a predefined set of frequencies.
 
-Based on those assumptions, I decided to prototype a robot controlled by sound wave tones.
+Based on those assumptions, decided to prototype a robot controlled by sound wave tones.
 
 This is what I achieved:
 
