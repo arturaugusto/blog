@@ -17,5 +17,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TOKEN: ${{ secrets.TOKEN }}
       - name: set_cname
-        run: echo "arturaugusto.me" > ../public/CNAME
+        run: echo "arturaugusto.me" > CNAME
           
