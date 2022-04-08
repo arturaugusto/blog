@@ -3,8 +3,8 @@
 base_url = "https://arturaugusto.me"
 
 compile_sass = true
-title = "artur-blog"
-description = ""
+title = "Artur's Blog"
+description = "Random stuff (mainly tech related)"
 generate_feed = true
 
 taxonomies = [
@@ -13,7 +13,7 @@ taxonomies = [
 ]
 
 [extra]
-author = "Vincent"
+author = "Artur"
 after_dark_menu = [
     {url = "$BASE_URL", name = "Home"},
     {url = "$BASE_URL/categories", name = "Categories"},
