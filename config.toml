@@ -12,6 +12,9 @@ taxonomies = [
     {name = "tags", feed = true},
 ]
 
+[markdown]
+highlight_code = true
+
 [extra]
 author = "Artur"
 after_dark_menu = [
