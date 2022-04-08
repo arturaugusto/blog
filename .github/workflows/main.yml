@@ -16,4 +16,6 @@ jobs:
           # Provide personal access token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TOKEN: ${{ secrets.TOKEN }}
-          #REPOSITORY: arturaugusto/arturaugusto.github.io
+      - name: set_cname
+        run: echo "arturaugusto.me" > ../public/CNAME
+          
