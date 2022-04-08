@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+	<title>Artur&#x27;s Blog - Personal</title>
+	<subtitle>Random stuff (mainly tech related)</subtitle>
+	<link href="https://arturaugusto.me/categories/personal/atom.xml" rel="self" type="application/atom+xml"/>
+  <link href="https://arturaugusto.me"/>
+	<generator uri="https://www.getzola.org/">Zola</generator>
+	<updated>2022-04-07T00:00:00+00:00</updated>
+	<id>https://arturaugusto.me/categories/personal/atom.xml</id>
+	<entry xml:lang="en">
+		<title>Why I started a new blog in 2022?</title>
+		<published>2022-04-07T00:00:00+00:00</published>
+		<updated>2022-04-07T00:00:00+00:00</updated>
+		<link href="https://arturaugusto.me/why-to-blog/" type="text/html"/>
+		<id>https://arturaugusto.me/why-to-blog/</id>
+		<content type="html">&lt;ol&gt;
+&lt;li&gt;Tired of social media format - A personal blog have more personality &lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Improve my writing skills - English is not my native language, as you can notice&lt;&#x2F;li&gt;
+&lt;li&gt;Document what I&#x27;m doing. It can be useful to me and others&lt;&#x2F;li&gt;
+&lt;li&gt;Looks like a nice hobby&lt;&#x2F;li&gt;
+&lt;li&gt;Maybe I can become good at it&lt;&#x2F;li&gt;
+&lt;li&gt;...&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;Will write more reasons as I remember.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+</feed>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title>Artur&#x27;s Blog</title>
+
+      
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="https://arturaugusto.me/atom.xml">
+      
+
+      
+          <link rel="stylesheet" href="https://arturaugusto.me/site.css">
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;arturaugusto.me">
+                                <span itemprop="name">Home
+                                </span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;arturaugusto.me&#x2F;categories">
+                                <span itemprop="name">Categories
+                                </span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;arturaugusto.me&#x2F;tags">
+                                <span itemprop="name">Tags
+                                </span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">Talking with robots</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>4 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2022-04-08
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>I always found configuring wireless gadgets very annoying.</p>
+<p>Pairing/unpairing/repairing bluetooth things on badly designed user interfaces is not my thing.</p>
+<p>But what are the options for simple wireless communication?</p>
+<span id="continue-reading"></span>
+<p>A surprisingly non-obvious option is the use of sound waves to create a sort of communication. Surprisingly because that is what we use for talking with each other, but not something we consider to use to interact with an embedded electronic system.</p>
+<p>Developing speech recognition is not a simple task. But maybe this is not the correct path to achieve a communication channel with hardware for simple applications. Detecting single tones is a very feasible thing to do though.</p>
+<p>A handy algorithm that can be used to detect tones even on memory constrained hardware is the <a href="https://en.wikipedia.org/wiki/Goertzel_algorithm">Goertzel Algorithm</a>. Opposite to Fast Fourier Transform, It requires much less memory and CPU cycles to compute a predefined set of frequencies.</p>
+<p>Based on those assumptions, decided to prototype a robot controlled by sound wave tones.</p>
+<p>This is what I achieved:</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/JwpZoJkUezs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<p>The embedded Rust source running on the STM32 bluepill microcontroller is available at <a href="https://github.com/arturaugusto/audio-drone">https://github.com/arturaugusto/audio-drone</a>.</p>
+<p>For my robot, I defined four frequencies to be detected. Each frequency is associated with some action, like move forward, backward, turn left or right.</p>
+<p>I decided to write my own implementation of Goertzel Algorithm in Rust. It is almost a verbatim translation from <a href="https://netwerkt.wordpress.com/2011/08/25/goertzel-filter/">this C implementation</a>. The source code is available at <a href="https://github.com/arturaugusto/rt-goertzel">https://github.com/arturaugusto/rt-goertzel</a></p>
+<p>The follow snippet is a self-contained full usage example of implemented algorithm that can be run on <a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=9fa02a5c291bdba3687129bcfd7733af">https://play.rust-lang.org/</a>:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">pub mod </span><span>filter {
+</span><span>    </span><span style="color:#b48ead;">pub struct </span><span>Goertzel {
+</span><span>        </span><span style="color:#bf616a;">s_prev</span><span>: </span><span style="color:#b48ead;">f32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">s_prev2</span><span>: </span><span style="color:#b48ead;">f32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">totalpower</span><span>: </span><span style="color:#b48ead;">f32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">n</span><span>: </span><span style="color:#b48ead;">i32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">mean</span><span>: </span><span style="color:#b48ead;">f32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">mean_prev</span><span>: </span><span style="color:#b48ead;">f32</span><span>,
+</span><span>
+</span><span>        </span><span style="color:#bf616a;">freq</span><span>: </span><span style="color:#b48ead;">f32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">samplef</span><span>: </span><span style="color:#b48ead;">f32
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">impl </span><span>Goertzel {
+</span><span>        </span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">new</span><span>(</span><span style="color:#bf616a;">freq</span><span>: </span><span style="color:#b48ead;">f32</span><span>, </span><span style="color:#bf616a;">samplef</span><span>: </span><span style="color:#b48ead;">f32</span><span>) -&gt; </span><span style="color:#b48ead;">Self </span><span>{
+</span><span>            </span><span style="color:#b48ead;">Self </span><span>{
+</span><span>                s_prev: </span><span style="color:#d08770;">0.</span><span>,
+</span><span>                s_prev2: </span><span style="color:#d08770;">0.</span><span>,
+</span><span>                totalpower: </span><span style="color:#d08770;">0.</span><span>,
+</span><span>                n: </span><span style="color:#d08770;">0</span><span>,
+</span><span>                mean: </span><span style="color:#d08770;">0.</span><span>,
+</span><span>                mean_prev: </span><span style="color:#d08770;">0.</span><span>,
+</span><span>
+</span><span>                freq: freq,
+</span><span>                samplef: samplef
+</span><span>            }
+</span><span>        }
+</span><span>        
+</span><span>        </span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">filter </span><span>(&amp;</span><span style="color:#b48ead;">mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">sample</span><span>: </span><span style="color:#b48ead;">f32</span><span>) -&gt; </span><span style="color:#b48ead;">f32 </span><span>{
+</span><span>            </span><span style="color:#65737e;">// real time mean
+</span><span>            </span><span style="color:#65737e;">// https://dsp.stackexchange.com/questions/811/determining-the-mean-and-standard-deviation-in-real-time
+</span><span>            </span><span style="color:#bf616a;">self</span><span>.mean_prev = </span><span style="color:#bf616a;">self</span><span>.mean;
+</span><span>            </span><span style="color:#bf616a;">self</span><span>.n = </span><span style="color:#bf616a;">self</span><span>.n + </span><span style="color:#d08770;">1</span><span>;
+</span><span>            </span><span style="color:#bf616a;">self</span><span>.mean = </span><span style="color:#bf616a;">self</span><span>.mean + (sample-</span><span style="color:#bf616a;">self</span><span>.mean)/</span><span style="color:#bf616a;">self</span><span>.n as </span><span style="color:#b48ead;">f32</span><span>;
+</span><span>            </span><span style="color:#b48ead;">let</span><span> x: </span><span style="color:#b48ead;">f32 </span><span>= sample - </span><span style="color:#bf616a;">self</span><span>.mean;
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> normalizedfreq: </span><span style="color:#b48ead;">f32 </span><span>= </span><span style="color:#bf616a;">self</span><span>.freq/</span><span style="color:#bf616a;">self</span><span>.samplef;
+</span><span>            </span><span style="color:#b48ead;">let</span><span> coeff: </span><span style="color:#b48ead;">f32 </span><span>= </span><span style="color:#d08770;">2.</span><span>*(</span><span style="color:#d08770;">2.</span><span>*</span><span style="color:#d08770;">3.1416</span><span>*normalizedfreq).</span><span style="color:#96b5b4;">cos</span><span>();
+</span><span>            </span><span style="color:#b48ead;">let</span><span> s: </span><span style="color:#b48ead;">f32 </span><span>= x + coeff * </span><span style="color:#bf616a;">self</span><span>.s_prev - </span><span style="color:#bf616a;">self</span><span>.s_prev2;
+</span><span>            </span><span style="color:#bf616a;">self</span><span>.s_prev2 = </span><span style="color:#bf616a;">self</span><span>.s_prev;
+</span><span>            </span><span style="color:#bf616a;">self</span><span>.s_prev = s;
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> power: </span><span style="color:#b48ead;">f32 </span><span>= </span><span style="color:#bf616a;">self</span><span>.s_prev2*</span><span style="color:#bf616a;">self</span><span>.s_prev2+</span><span style="color:#bf616a;">self</span><span>.s_prev*</span><span style="color:#bf616a;">self</span><span>.s_prev-coeff*</span><span style="color:#bf616a;">self</span><span>.s_prev*</span><span style="color:#bf616a;">self</span><span>.s_prev2;
+</span><span>            </span><span style="color:#bf616a;">self</span><span>.totalpower = </span><span style="color:#bf616a;">self</span><span>.totalpower + x*x;
+</span><span>            </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">self</span><span>.totalpower &lt; </span><span style="color:#d08770;">0. </span><span>{
+</span><span>                </span><span style="color:#bf616a;">self</span><span>.totalpower = </span><span style="color:#d08770;">1.
+</span><span>            }
+</span><span>            </span><span style="color:#b48ead;">return</span><span> power / </span><span style="color:#bf616a;">self</span><span>.totalpower / </span><span style="color:#bf616a;">self</span><span>.n as </span><span style="color:#b48ead;">f32
+</span><span>        }
+</span><span>    }
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">use crate</span><span>::filter::Goertzel;
+</span><span style="color:#b48ead;">use </span><span>core::f32::consts::</span><span style="color:#d08770;">PI</span><span>;
+</span><span>
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">main</span><span>() {
+</span><span>
+</span><span>  </span><span style="color:#b48ead;">let</span><span> target_freq = </span><span style="color:#d08770;">100.</span><span>;
+</span><span>  </span><span style="color:#b48ead;">let</span><span> sample_freq = </span><span style="color:#d08770;">1000.</span><span>;
+</span><span>  </span><span style="color:#b48ead;">let mut</span><span> g1 = Goertzel::new(target_freq, sample_freq);
+</span><span>  </span><span style="color:#b48ead;">let mut</span><span> g2 = Goertzel::new(target_freq, sample_freq);
+</span><span>  
+</span><span>  
+</span><span>  </span><span style="color:#b48ead;">let mut</span><span> res_100 = </span><span style="color:#d08770;">0.</span><span>;
+</span><span>  </span><span style="color:#b48ead;">let mut</span><span> res_99 = </span><span style="color:#d08770;">0.</span><span>;
+</span><span>  </span><span style="color:#b48ead;">for</span><span> n in </span><span style="color:#d08770;">0</span><span>..</span><span style="color:#d08770;">1000 </span><span>{
+</span><span>    </span><span style="color:#b48ead;">let</span><span> sample =  (n as </span><span style="color:#b48ead;">f32 </span><span>* </span><span style="color:#d08770;">1.</span><span>/sample_freq * </span><span style="color:#d08770;">2. </span><span>* </span><span style="color:#d08770;">PI </span><span>* target_freq).</span><span style="color:#96b5b4;">sin</span><span>();
+</span><span>    res_100 = g1.</span><span style="color:#96b5b4;">filter</span><span>(sample);
+</span><span>    </span><span style="color:#b48ead;">let</span><span> sample =  (n as </span><span style="color:#b48ead;">f32 </span><span>* </span><span style="color:#d08770;">1.</span><span>/sample_freq * </span><span style="color:#d08770;">2. </span><span>* </span><span style="color:#d08770;">PI </span><span>* </span><span style="color:#d08770;">99.</span><span>).</span><span style="color:#96b5b4;">sin</span><span>();
+</span><span>    res_99 = g2.</span><span style="color:#96b5b4;">filter</span><span>(sample);
+</span><span>  }
+</span><span>  println!(&quot;</span><span style="color:#a3be8c;">Non zero value means that filter detected some energy.</span><span>&quot;);
+</span><span>  println!(&quot;</span><span style="color:#a3be8c;">Result for exact filter frequency: </span><span style="color:#d08770;">{:?}</span><span>&quot;, res_100);
+</span><span>  println!(&quot;</span><span style="color:#a3be8c;">Result for a close but not exact filter frequency: </span><span style="color:#d08770;">{:?}</span><span>&quot;, res_99);
+</span><span>}
+</span></code></pre>
+<p>The output of this snippet is:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Non zero means that some energy was detected.
+</span><span>Result for exact filter frequency: 0.49815935
+</span><span>Result for a close but not exact filter frequency: 1.9859854e-5
+</span></code></pre>
+<p>I also made a simple <a href="https://github.com/arturaugusto/audio-drone-keypad">user interface</a> using Javascript and the browser audio API to play tones, so I don't need to whistle every time like here:</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/rYuAQTtDHGI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                    Published by Artur
+                
+                
+                    
+                    in <a href="https://arturaugusto.me/categories/tech/">Tech</a>
+                
+                
+                    and
+                    tagged
+                    
+                        <a href="https://arturaugusto.me/tags/rust/">rust</a>
+                        
+                            
+                                
+                                    ,
+                                
+                            
+                        
+                    
+                        <a href="https://arturaugusto.me/tags/stm32/">stm32</a>
+                        
+                            
+                                
+                                    ,
+                                
+                            
+                        
+                    
+                        <a href="https://arturaugusto.me/tags/embedded/">embedded</a>
+                        
+                            
+                                
+                                    and
+                                
+                            
+                        
+                    
+                        <a href="https://arturaugusto.me/tags/dsp/">DSP</a>
+                        
+                            
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>
