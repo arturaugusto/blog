@@ -1,10 +1,10 @@
 +++
 title = "Talking with robots"
 date = 2022-04-08
-category = "Tech"
 
 [taxonomies]
 tags = ["rust", "stm32", "embedded", "DSP"]
+categories = ["Tech"]
 +++
 
 I always found configuring wireless gadgets very annoying.
