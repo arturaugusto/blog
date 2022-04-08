@@ -15,7 +15,4 @@ jobs:
           PAGES_BRANCH: gh-pages
           # Provide personal access token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TOKEN: ${{ secrets.TOKEN }}
-      - name: set_cname
-        run: echo "arturaugusto.me" > CNAME
-          
+          TOKEN: ${{ secrets.TOKEN }}          
