@@ -15,4 +15,5 @@ jobs:
           PAGES_BRANCH: gh-pages
           # Provide personal access token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPOSITORY: arturaugusto/arturaugusto.github.io
+          TOKEN: ${{ secrets.TOKEN }}
+          #REPOSITORY: arturaugusto/arturaugusto.github.io
