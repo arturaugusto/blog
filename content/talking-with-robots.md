@@ -33,7 +33,7 @@ For my robot, I defined four frequencies to be detected. Each frequency is assoc
 
 I decided to write my own implementation of Goertzel Algorithm in Rust. It is almost a verbatim translation from [this C implementation](https://netwerkt.wordpress.com/2011/08/25/goertzel-filter/). The source code is available at [https://github.com/arturaugusto/rt-goertzel](https://github.com/arturaugusto/rt-goertzel)
 
-The follow snippet is a self-contained full usage example of implemented algorithm that can be run on [https://play.rust-lang.org/](https://play.rust-lang.org/):
+The follow snippet is a self-contained full usage example of implemented algorithm that can be run on [https://play.rust-lang.org/](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=9fa02a5c291bdba3687129bcfd7733af):
 
 ```rust
 pub mod filter {
